@@ -4,7 +4,8 @@ WebShutter implements a simple webserver and REST API to controll GPIO pins of a
 
 ## Getting started
 
-You need a Raspberry Pi (at least model 2). Install Windows 10 IoT Core (see https://docs.microsoft.com/de-de/windows/iot-core/tutorials/tutorials).
+* Get a Raspberry Pi. At least model 2 is required.
+* Install Windows 10 IoT Core (see https://docs.microsoft.com/de-de/windows/iot-core/tutorials/tutorials).
 
 ## Hardware wiring
 
