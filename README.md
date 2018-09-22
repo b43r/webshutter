@@ -27,6 +27,8 @@ Each shutter requires 2 switches (and 2 GPIO pins), therefore a Raspberry can co
 
 Between the Raspberry GPIO pins and the optocoupler input 230&#x2126; resistors are added. This limits the current to reasonable 10mA (GPIO pin 3.3V, 1V drop on optocoupler diode => 2.3V / 10mA = 230&#x2126;).
 
+The following table shows the usage of teh GPIO pins in their default configuration:
+
 GPIO | Header no. | Usage
 --- | --- | ---
 9 | 21 | shutter 1 UP
