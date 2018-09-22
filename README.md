@@ -26,3 +26,16 @@ For the optocouplers I went for the ILQ615-4 which contains 4 galvanically isola
 Each shutter requires 2 switches (and 2 GPIO pins), therefore a Raspberry can control up to 5 shutters. But because of the limited space on the breakout board I fitted only 2 ILQ615-4 optocouplers that control 4 shutters.
 
 Between the Raspberry GPIO pins and the optocoupler input 230&#x2126; resistors are added. This limits the current to reasonable 10mA (GPIO pin 3.3V, 1V drop on optocoupler diode => 2.3V / 10mA = 230&#x2126;).
+
+GPIO | Header no. | Usage
+--- | --- | ---
+9 | 21 | shutter 1 UP
+10 | 19 | shutter 1 DOWN
+11 | 23 | shutter 2 UP
+17 | 11 | shutter 2 DOWN
+18 | 12 | shutter 3 UP
+22 | 15 | shutter 3 DOWN
+23 | 16 | shutter 4 UP
+24 | 18 | shutter 4 DOWN
+7 | 26 | LED
+8 | 24 | push button
