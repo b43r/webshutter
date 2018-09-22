@@ -15,7 +15,7 @@ The default web page displays a simple UI for controlling up to 4 shutters. The 
 
 Our shutter hardware offers the possibility to connect push buttons for up/down commands. The connectors supply a voltage of 15V and a current of 1mA is flowing when connected. To avoid any damage to the Raspberry or shutter hardware, both systems are galvanically isolated using optocouplers.
 
-I used a [breakout board](https://www.seeedstudio.com/Raspberry-Pi-Breakout-Board-v1-0-p-2410.html) from [Seed](https://www.seeedstudio.com/), which can be screwed ontop of the Raspberry using spacers. This board offers also some additional features like an LED or a push button.
+I used a [breakout board](https://www.seeedstudio.com/Raspberry-Pi-Breakout-Board-v1-0-p-2410.html) from [Seed](https://www.seeedstudio.com/), which can be screwed ontop of the Raspberry using spacers. This board offers also some additional features like an LED and a push button.
 
 ![Seed breakout board](images/breakoutboard.jpg)
 
