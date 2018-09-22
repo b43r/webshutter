@@ -1,14 +1,14 @@
 # WebShutter
 
-WebShutter implements a simple webserver and REST API to controll GPIO pins of a Raspberry Pi. WebShutter runs as a UWP (Universal Windows Platform) on Windows 10 IOT.
+WebShutter implements a simple webserver and REST API to controll GPIO pins of a Raspberry Pi. WebShutter runs as a UWP (Universal Windows Platform) on Windows 10 IoT.
 
-The default web page displays a simple UI for controlling up to 4 shutters.
+The default web page displays a simple UI for controlling up to 4 shutters. The buttons on the UI can be used to pulse GPIO pins for either 100ms or 600ms. To actually control a shutter, some hardware needs to be build as described below.
 
 ## Getting started
 
 * Get a Raspberry Pi. At least model 2 is required.
 * Install Windows 10 IoT Core as described here: https://docs.microsoft.com/de-de/windows/iot-core/tutorials/tutorials
-* Grab the latest WebShutter release and install it as startup app.
+* Grab the latest WebShutter release and install it as the startup app.
 * Browse to http://ip_of_raspberry/
 
 ## Hardware wiring
