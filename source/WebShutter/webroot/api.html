@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>WebShutter API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap-theme.min.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>WebShutter API</h1>
+        <h2>GPIO API</h2>
+
+        <pre>GET /api/gpio/[pin]/[value]</pre>
+        <p>
+            [pin] : GPIO Pin Nummer<br />
+            [value] : 0 = Low, 1 = High<br />
+        </p>
+
+        <h2>Shutter API</h2>
+        <pre>GET /api/shutter/[group]/[sequence]</pre>
+        <p>
+            [group] : Rollladengruppe (1-4)<br />
+            [sequence] : Befehle durch Kommas getrennt (z.B.: dd,5000,u,u,u)<br />
+        </p>
+        <p>
+            Befehle:
+        </p>
+        <ul>
+            <li>dd: Ganz herunterfahren (Puls 600ms)</li>
+            <li>d: Hochfahren stoppen bzw. Lamellen eine Stufe schliessen (Puls 100ms)</li>
+            <li>uu: Ganz hochfahren (Puls 600ms)</li>
+            <li>u: Herunterfahren stoppen bzw. Lamellen eine Stufe öffnen (Puls 100ms)</li>
+            <li>Zahl: Verzögerung in Millisekunden</li>
+        </ul>
+    </div>
+</body>
+</html>

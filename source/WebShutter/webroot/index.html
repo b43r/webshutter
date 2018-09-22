@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>WebShutter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap-theme.min.css" />
+</head>
+<body>
+    <div class="container">
+
+        <h1>Rollladensteuerung</h1>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Gruppe 1</div>
+            <div class="panel-body">
+                <button class="btn btn-default" data-group="1" data-command="uu">Hoch (lang)</button>
+                <button class="btn btn-default" data-group="1" data-command="dd">Runter (lang)</button>
+                <button class="btn btn-default" data-group="1" data-command="u">Hoch (kurz)</button>
+                <button class="btn btn-default" data-group="1" data-command="d">Runter (kurz)</button>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Gruppe 2</div>
+            <div class="panel-body">
+                <button class="btn btn-default" data-group="2" data-command="uu">Hoch (lang)</button>
+                <button class="btn btn-default" data-group="2" data-command="dd">Runter (lang)</button>
+                <button class="btn btn-default" data-group="2" data-command="u">Hoch (kurz)</button>
+                <button class="btn btn-default" data-group="2" data-command="d">Runter (kurz)</button>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Gruppe 3</div>
+            <div class="panel-body">
+                <button class="btn btn-default" data-group="3" data-command="uu">Hoch (lang)</button>
+                <button class="btn btn-default" data-group="3" data-command="dd">Runter (lang)</button>
+                <button class="btn btn-default" data-group="3" data-command="u">Hoch (kurz)</button>
+                <button class="btn btn-default" data-group="3" data-command="d">Runter (kurz)</button>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Gruppe 4</div>
+            <div class="panel-body">
+                <button class="btn btn-default" data-group="4" data-command="uu">Hoch (lang)</button>
+                <button class="btn btn-default" data-group="4" data-command="dd">Runter (lang)</button>
+                <button class="btn btn-default" data-group="4" data-command="u">Hoch (kurz)</button>
+                <button class="btn btn-default" data-group="4" data-command="d">Runter (kurz)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="jquery-2.2.4.min.js" type="text/javascript"></script>
+    <script src="bootstrap.min.js" type="text/javascript"></script>
+
+    <script>
+        $(function () {
+
+            $('.btn').on('click', function () {
+                var group = $(this).attr("data-group");
+                var command = $(this).attr("data-command");
+                var url = "/api/shutter/" + group + "/" + command;
+                var btn = $(this);
+                btn.attr("disabled", "disabled");
+                console.log(url);
+
+                $.ajax({                    
+                    url: url,
+                    success: function (result) {
+                        console.log("Ok.");
+                        btn.removeAttr("disabled");
+                        $('#divResult').html(result);
+                    },
+                    error: function (result) {
+                        console.log("Error: " + result.statusText);
+                        btn.removeAttr("disabled");
+                        $(btn).attr("data-placement", "top");
+                        $(btn).attr("data-title", "Fehler");
+                        $(btn).attr("data-content", result.statusText);
+                        $(btn).popover("show");
+                        window.setTimeout(function () { $(btn).popover("hide"); }, 2000);
+                    },
+                    dataType: 'html'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
