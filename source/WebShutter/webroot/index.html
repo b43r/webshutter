@@ -6,14 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="bootstrap.min.css" />
     <link rel="stylesheet" href="bootstrap-theme.min.css" />
+
+    <style>
+        i {
+            border: solid black;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 3px;
+        }
+        .up {
+            transform: rotate(-135deg);
+            -webkit-transform: rotate(-135deg);
+        }
+        .down {
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+
+        .panel-heading span {
+            float: left;
+        }
+        .panel-heading div {
+            float: right;
+            cursor: pointer;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        hr {
+            margin-bottom: 10px;
+        }
+    </style>
+
 </head>
 <body>
     <div class="container">
 
-        <h1>Rollladensteuerung</h1>
+        <h1>Rollladensteuerung (shutter1)</h1>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">Gruppe 1</div>
+        <div class="panel panel-default" id="grp1">
+            <div class="panel-heading clearfix"><span>Gruppe 1</span><div><i class="up"></i></div></div>
             <div class="panel-body">
                 <button class="btn btn-default" data-group="1" data-command="uu">Hoch (lang)</button>
                 <button class="btn btn-default" data-group="1" data-command="dd">Runter (lang)</button>
@@ -22,8 +53,8 @@
             </div>
         </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">Gruppe 2</div>
+        <div class="panel panel-default" id="grp2">
+            <div class="panel-heading clearfix"><span>Gruppe 2</span><div><i class="up"></i></div></div>
             <div class="panel-body">
                 <button class="btn btn-default" data-group="2" data-command="uu">Hoch (lang)</button>
                 <button class="btn btn-default" data-group="2" data-command="dd">Runter (lang)</button>
@@ -32,8 +63,8 @@
             </div>
         </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">Gruppe 3</div>
+        <div class="panel panel-default" id="grp3">
+            <div class="panel-heading clearfix"><span>Gruppe 3</span><div><i class="up"></i></div></div>
             <div class="panel-body">
                 <button class="btn btn-default" data-group="3" data-command="uu">Hoch (lang)</button>
                 <button class="btn btn-default" data-group="3" data-command="dd">Runter (lang)</button>
@@ -42,8 +73,8 @@
             </div>
         </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">Gruppe 4</div>
+        <div class="panel panel-default" id="grp4">
+            <div class="panel-heading clearfix"><span>Gruppe 4</span><div><i class="up"></i></div></div>
             <div class="panel-body">
                 <button class="btn btn-default" data-group="4" data-command="uu">Hoch (lang)</button>
                 <button class="btn btn-default" data-group="4" data-command="dd">Runter (lang)</button>
@@ -51,6 +82,10 @@
                 <button class="btn btn-default" data-group="4" data-command="d">Runter (kurz)</button>
             </div>
         </div>
+
+        <hr />
+        <span>V1.1</span>
+
     </div>
 
     <script src="jquery-2.2.4.min.js" type="text/javascript"></script>
@@ -59,7 +94,20 @@
     <script>
         $(function () {
 
-            $('.btn').on('click', function () {
+            $("div.panel-heading div").on("click", function () {
+                if ($(this).children("i").hasClass("up")) {
+                    $(this).children("i").removeClass("up");
+                    $(this).children("i").addClass("down");
+                    $(this).closest(".panel-default").children(".panel-body").addClass("collapse");
+                } else {
+                    $(this).children("i").removeClass("down");
+                    $(this).children("i").addClass("up");
+                    $(this).closest(".panel-default").children(".panel-body").removeClass("collapse");
+                }
+                saveCookie();
+            });
+
+            $("div.panel-body button.btn").on("click", function () {
                 var group = $(this).attr("data-group");
                 var command = $(this).attr("data-command");
                 var url = "/api/shutter/" + group + "/" + command;
@@ -67,8 +115,9 @@
                 btn.attr("disabled", "disabled");
                 console.log(url);
 
-                $.ajax({                    
+                $.ajax({
                     url: url,
+                    cache: false,
                     success: function (result) {
                         console.log("Ok.");
                         btn.removeAttr("disabled");
@@ -86,7 +135,49 @@
                     dataType: 'html'
                 });
             });
+
+            // read cookie and set collapsed groups
+            var collapsedGroups = getCookie("collapsed").split(",");
+            for (var i = 0; i < collapsedGroups.length; i++) {
+                if (collapsedGroups[i].length > 0) {
+                    $("#" + collapsedGroups[i] + " div.panel-body").addClass("collapse");
+                    $("#" + collapsedGroups[i] + " div.panel-heading i").removeClass("up");
+                    $("#" + collapsedGroups[i] + " div.panel-heading i").addClass("down");
+                }
+            }
         });
+
+        // save all collapsed groups in a cookie
+        function saveCookie() {
+            var c = "";
+            $("div.panel-body.collapse").each(function (i, el) {
+                c += $(el).closest(".panel-default").get(0).id + ",";
+            });
+
+            var d = new Date();
+            d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = "collapsed=" + c + ";" + expires + ";path=/";
+
+            console.log("Cookie saved: " + document.cookie);
+        }
+
+        // gets the cookie with teh given name
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        } 
     </script>
 </body>
 </html>

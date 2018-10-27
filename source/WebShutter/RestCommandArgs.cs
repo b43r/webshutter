@@ -33,9 +33,10 @@ namespace WebShutter
         public string ErrorMessage { get; set; }
         public string HtmlResponse { get; set; }
 
-        public RestCommandArgs(string command)
+        public RestCommandArgs(string url)
         {
-            Command = command;
+            string[] parts = url.Split('?');
+            Command = parts[0];
             IsValid = true;
             ErrorMessage = string.Empty;
             HtmlResponse = string.Empty;

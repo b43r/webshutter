@@ -71,47 +71,54 @@ namespace WebShutter
         /// <param name="args"></param>
         private async void HandleRequest(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
         {
-            StringBuilder request = new StringBuilder();
-            
-            // Handle an incoming request
-            // First read the request
-            using (IInputStream input = args.Socket.InputStream)
+            try
             {
-                byte[] data = new byte[BufferSize];
-                IBuffer buffer = data.AsBuffer();
-                uint dataRead = BufferSize;
-                while (dataRead == BufferSize)
-                {
-                    await input.ReadAsync(buffer, BufferSize, InputStreamOptions.Partial);
-                    request.Append(Encoding.UTF8.GetString(data, 0, data.Length));
-                    dataRead = buffer.Length;
-                }
-            }
+                StringBuilder request = new StringBuilder();
 
-            var requestLines = request.ToString().Split('\r', '\n');
-            if ((requestLines.Length > 0) && requestLines[0].ToUpper().StartsWith("GET "))
-            {
-                var url = requestLines[0].Substring(4).Split(' ')[0];
-
-                if (!await SendFile(args.Socket.OutputStream, url))
+                // Handle an incoming request
+                // First read the request
+                using (IInputStream input = args.Socket.InputStream)
                 {
-                    // if no static file has been served, check for a REST call
-                    var e = new RestCommandArgs(url);
-                    RestCommand?.Invoke(this, e);
-                    if (e.IsValid)
+                    byte[] data = new byte[BufferSize];
+                    IBuffer buffer = data.AsBuffer();
+                    uint dataRead = BufferSize;
+                    while (dataRead == BufferSize)
                     {
-                        var htmlResponse = string.IsNullOrEmpty(e.HtmlResponse) ? $"<html><body>Ok. ({e.Command})</body></html>" : e.HtmlResponse;
-                        SendHtmlResponse(args.Socket.OutputStream, 200, "OK", htmlResponse);
-                    }
-                    else
-                    {
-                        SendHtmlResponse(args.Socket.OutputStream, 400, "Bad Request", $"<html><body><h1>Bad Request</h1>Invalid command: {e.Command}<br/>{e.ErrorMessage}</body></html>");
+                        await input.ReadAsync(buffer, BufferSize, InputStreamOptions.Partial);
+                        request.Append(Encoding.UTF8.GetString(data, 0, data.Length));
+                        dataRead = buffer.Length;
                     }
                 }
+
+                var requestLines = request.ToString().Split('\r', '\n');
+                if ((requestLines.Length > 0) && requestLines[0].ToUpper().StartsWith("GET "))
+                {
+                    var url = requestLines[0].Substring(4).Split(' ')[0];
+
+                    if (!await SendFile(args.Socket.OutputStream, url))
+                    {
+                        // if no static file has been served, check for a REST call
+                        var e = new RestCommandArgs(url);
+                        RestCommand?.Invoke(this, e);
+                        if (e.IsValid)
+                        {
+                            var htmlResponse = string.IsNullOrEmpty(e.HtmlResponse) ? $"<html><body>Ok. ({e.Command})</body></html>" : e.HtmlResponse;
+                            SendHtmlResponse(args.Socket.OutputStream, 200, "OK", htmlResponse);
+                        }
+                        else
+                        {
+                            SendHtmlResponse(args.Socket.OutputStream, 400, "Bad Request", $"<html><body><h1>Bad Request</h1>Invalid command: {e.Command}<br/>{e.ErrorMessage}</body></html>");
+                        }
+                    }
+                }
+                else
+                {
+                    SendHtmlResponse(args.Socket.OutputStream, 400, "Bad Request", "<html><body>Bad Request</body></html>");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                SendHtmlResponse(args.Socket.OutputStream, 400, "Bad Request", "<html><body>Bad Request</body></html>");
+                SendHtmlResponse(args.Socket.OutputStream, 500, "Internal Server Error", $"<html><body>Internal Server Error{ex}</body></html>");
             }
         }
 
@@ -125,7 +132,8 @@ namespace WebShutter
         {
             try
             {
-                var urlParts = url.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                // remove any URL parameters after ?
+                var urlParts = url.Split('?')[0].Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
                 if (urlParts.Length == 0)
                 {
                     urlParts = new[] { "index.html" };
@@ -185,7 +193,7 @@ namespace WebShutter
                 {
                     var bodyStream = new MemoryStream(content);
 
-                    var cacheControl = cache ? "Cache-Control: public, max-age=315360000\r\n" : "";
+                    var cacheControl = cache ? "Cache-Control: public, max-age=315360000\r\n" : "Cache-Control: no-cache, no-store, must-revalidate\r\n";
 
                     // This is a standard HTTP header so the client browser knows the bytes returned are a valid http response
                     var header = $"HTTP/1.1 {httpStatusCode} {httpStatusText}\r\n" +
