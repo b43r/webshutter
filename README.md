@@ -9,7 +9,7 @@ The default web page displays a simple UI for controlling up to 4 shutters. The 
 * Get a Raspberry Pi. At least model 2 is required.
 * Install Windows 10 IoT Core as described here: https://docs.microsoft.com/de-de/windows/iot-core/tutorials/tutorials
 * Grab the latest WebShutter release and install it as the startup app.
-* Manually copy all files from the *wwwroot* directory to the *LocalState* directory if the application on the Raspberry Pi. This directory is located at C:\Data\Users\DefaultAccount\AppData\Local\Packages\WebShutter-uwp_z2qfjksrkz8j4\LocalState, where the application directory contains an individual random expression.
+* Manually copy all files from the *wwwroot* directory to the *LocalState* directory of the application on the Raspberry Pi. This directory is located at C:\Data\Users\DefaultAccount\AppData\Local\Packages\WebShutter-uwp_z2qfjksrkz8j4\LocalState, where the application directory contains an individual random expression.
 * Browse to http://ip_of_raspberry/
 
 ## Hardware wiring
